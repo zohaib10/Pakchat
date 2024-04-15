@@ -1,20 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import { ThemeProvider } from 'styled-components/native'
+import { useFonts } from 'expo-font'
+import { createStore } from './src/store/store'
+import { Provider } from 'react-redux'
+import { Navigator } from './src/feature/StackNavigator/component'
+import { appNavigator, AppNavigatorWrapper } from './src/feature/Navigation'
+import { useEffect } from 'react'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { ScrollView } from 'react-native'
+
+const loadFonts = () => {
+  return useFonts({
+    Alexandria: require('./src/assets/fonts/Alexandria.ttf'),
+    // Add other fonts if needed
+  })
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const store = createStore()
+export default function App() {
+  const [fontsLoaded] = loadFonts()
+
+  return (
+    <Provider store={store}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        {fontsLoaded && (
+          <ThemeProvider
+            theme={{
+              colors: {
+                background: '#C6E57D',
+                primary: '#013334',
+                secondary: '#013334',
+                accent: '#4D2114',
+                white: '#fff',
+                black: '#222',
+                disabled: '#CCCCCC',
+                offWhite: '#FAF9F6',
+              },
+              fonts: {
+                regular: 'Alexandria',
+              },
+            }}>
+            <Navigator />
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        )}
+      </GestureHandlerRootView>
+    </Provider>
+  )
+}
